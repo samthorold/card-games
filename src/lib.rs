@@ -25,7 +25,7 @@ pub mod french {
     }
 
     impl Deck {
-        pub fn new() -> Deck {
+        pub fn new(shuffle: bool) -> Deck {
             let mut cards = Vec::new();
             for suit in [Suit::Club, Suit::Diamond, Suit::Heart, Suit::Spade] {
                 cards.push(Card::King(suit));
@@ -35,15 +35,13 @@ pub mod french {
                     cards.push(Card::Pip(suit, rank))
                 }
             }
-            Deck {
+            let mut deck = Deck {
                 available_cards: cards,
                 used_cards: Vec::new(),
+            };
+            if shuffle {
+                deck.shuffle();
             }
-        }
-
-        pub fn new_shuffled() -> Deck {
-            let mut deck = Deck::new();
-            deck.shuffle();
             deck
         }
 
