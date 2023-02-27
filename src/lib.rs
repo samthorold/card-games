@@ -41,20 +41,32 @@ pub mod french {
             }
         }
 
+        pub fn new_shuffled() -> Deck {
+            let mut deck = Deck::new();
+            deck.shuffle();
+            deck
+        }
+
         pub fn shuffle(&mut self) {
             let mut rng = thread_rng();
             self.available_cards.shuffle(&mut rng);
         }
 
         pub fn draw(&mut self) -> Option<Card> {
-            let maybe_card = self.available_cards.pop();
-            match maybe_card {
-                Some(maybe_card) => {
-                    self.used_cards.push(maybe_card);
-                    Some(maybe_card)
+            match self.available_cards.pop() {
+                Some(card) => {
+                    self.used_cards.push(card);
+                    Some(card)
                 }
                 None => None,
             }
+        }
+    }
+
+    impl Iterator for Deck {
+        type Item = Card;
+        fn next(&mut self) -> Option<Self::Item> {
+            self.draw()
         }
     }
 }
