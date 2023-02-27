@@ -1,4 +1,4 @@
-use crate::deck::Deck;
+use crate::deck::{Card as CardTrait,Deck as DeckTrait};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
@@ -16,6 +16,12 @@ pub enum Card {
     Queen(Suit),
     Jack(Suit),
     Pip(Suit, usize),
+}
+
+impl CardTrait for Card {
+    fn string(&self) -> String {
+        String::from("Card")
+    }
 }
 
 pub struct FrenchDeck {
@@ -41,22 +47,17 @@ impl FrenchDeck {
     }
 }
 
-impl Deck for FrenchDeck {
-    type Item = Card;
+impl DeckTrait for FrenchDeck {
 
     fn shuffle(&mut self) {
         let mut rng = thread_rng();
         self.cards.shuffle(&mut rng);
     }
 
-    fn draw(&mut self) -> Option<Self::Item> {
-        self.cards.pop()
-    }
-}
-
-impl Iterator for FrenchDeck {
-    type Item = Card;
-    fn next(&mut self) -> Option<Self::Item> {
-        self.draw()
+    fn draw(&mut self) -> Option<Box<dyn CardTrait>> {
+        match self.cards.pop() {
+            Some(card) => Some(Box::new(card)),
+            None => None,
+        }
     }
 }

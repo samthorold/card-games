@@ -1,5 +1,10 @@
+use core::fmt::Debug;
+
+pub trait Card: Debug {
+    fn string(&self) -> String;
+}
+
 pub trait Deck {
-    type Item;
     fn shuffle(&mut self);
-    fn draw(&mut self) -> Option<Self::Item>;
+    fn draw(&mut self) -> Option<Box<dyn Card>>;
 }
