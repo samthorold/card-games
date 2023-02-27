@@ -1,3 +1,4 @@
+use crate::deck::Deck;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
@@ -17,13 +18,12 @@ pub enum Card {
     Pip(Suit, usize),
 }
 
-pub struct Deck {
-    available_cards: Vec<Card>,
-    used_cards: Vec<Card>,
+pub struct FrenchDeck {
+    cards: Vec<Card>,
 }
 
-impl Deck {
-    pub fn new(shuffle: bool) -> Deck {
+impl FrenchDeck {
+    pub fn new() -> FrenchDeck {
         let mut cards = Vec::new();
         for suit in [Suit::Club, Suit::Diamond, Suit::Heart, Suit::Spade] {
             cards.push(Card::King(suit));
@@ -33,33 +33,28 @@ impl Deck {
                 cards.push(Card::Pip(suit, rank))
             }
         }
-        let mut deck = Deck {
-            available_cards: cards,
-            used_cards: Vec::new(),
+        let mut deck = FrenchDeck {
+            cards: cards,
         };
-        if shuffle {
-            deck.shuffle();
-        }
+        deck.shuffle();
         deck
-    }
-
-    pub fn shuffle(&mut self) {
-        let mut rng = thread_rng();
-        self.available_cards.shuffle(&mut rng);
-    }
-
-    pub fn draw(&mut self) -> Option<Card> {
-        match self.available_cards.pop() {
-            Some(card) => {
-                self.used_cards.push(card);
-                Some(card)
-            }
-            None => None,
-        }
     }
 }
 
-impl Iterator for Deck {
+impl Deck for FrenchDeck {
+    type Item = Card;
+
+    fn shuffle(&mut self) {
+        let mut rng = thread_rng();
+        self.cards.shuffle(&mut rng);
+    }
+
+    fn draw(&mut self) -> Option<Self::Item> {
+        self.cards.pop()
+    }
+}
+
+impl Iterator for FrenchDeck {
     type Item = Card;
     fn next(&mut self) -> Option<Self::Item> {
         self.draw()
