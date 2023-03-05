@@ -1,4 +1,5 @@
-use crate::deck::{Card as CardTrait,Deck as DeckTrait};
+//! French deck implementation - classic 52 playing cards
+use crate::deck::{Card as CardTrait, Deck as DeckTrait};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
@@ -39,16 +40,13 @@ impl FrenchDeck {
                 cards.push(Card::Pip(suit, rank))
             }
         }
-        let mut deck = FrenchDeck {
-            cards: cards,
-        };
+        let mut deck = FrenchDeck { cards };
         deck.shuffle();
         deck
     }
 }
 
 impl DeckTrait for FrenchDeck {
-
     fn shuffle(&mut self) {
         let mut rng = thread_rng();
         self.cards.shuffle(&mut rng);
@@ -59,5 +57,20 @@ impl DeckTrait for FrenchDeck {
             Some(card) => Some(Box::new(card)),
             None => None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn new() {
+        FrenchDeck::new();
+    }
+    #[test]
+    fn draw() {
+        let mut deck = FrenchDeck::new();
+        deck.draw();
+        deck.draw();
     }
 }
