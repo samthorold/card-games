@@ -3,47 +3,51 @@
 use crate::deck::{Card as CardTrait, Deck as DeckTrait};
 use crate::french::FrenchDeck as Deck;
 
-struct Hand<'a> {
-    cards: Vec<&'a Box<dyn CardTrait>>,
+struct Hand {
+    cards: Vec<Box<dyn CardTrait>>,
 }
 
-impl<'a> Hand<'a> {
-    fn new() -> Hand<'a> {
+impl Hand {
+    fn new() -> Hand {
         Hand { cards: Vec::new() }
     }
 
-    fn add(&'a mut self, card: &'a Box<dyn CardTrait>) {
+    fn add(&mut self, card: Box<dyn CardTrait>) {
         self.cards.push(card);
     }
+
+    fn len(&self) -> usize {
+        self.cards.len()
+    }
 }
-struct Player<'a> {
-    hand: Hand<'a>,
+struct Player {
+    hand: Hand,
 }
 
-impl<'a> Player<'a> {
-    fn new() -> Player<'a> {
+impl Player {
+    fn new() -> Player {
         Player { hand: Hand::new() }
     }
 
-    fn add_to_hand(&'a mut self, card: &'a Box<dyn CardTrait>) {
+    fn add_to_hand(&mut self, card: Box<dyn CardTrait>) {
         self.hand.add(card);
     }
 }
 
-pub struct Game<'a> {
+pub struct Game {
     deck: Deck,
-    players: Vec<Player<'a>>,
+    players: Vec<Player>,
 }
 
-impl<'a> Game<'a> {
-    pub fn new() -> Game<'static> {
+impl Game {
+    pub fn new() -> Game {
         Game {
             deck: Deck::new(),
             players: vec![Player::new(), Player::new()],
         }
     }
 
-    pub fn turn(&'a mut self) {
+    pub fn turn(&mut self) {
         let mut i = 0;
         for player in &mut self.players {
             i += 1;
@@ -51,7 +55,10 @@ impl<'a> Game<'a> {
                 match self.deck.draw() {
                     Some(card) => {
                         println!("player {} drew {:?}", i, card);
-                        player.add_to_hand(&card);
+                        match player.hand.len() {
+                            0..=3 => player.add_to_hand(card),
+                            _ => break,
+                        }
                     }
                     _ => {
                         println!("no more cards");
