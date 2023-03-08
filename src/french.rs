@@ -30,7 +30,7 @@ pub struct FrenchDeck {
 }
 
 impl FrenchDeck {
-    pub fn new() -> FrenchDeck {
+    pub fn new_unshuffled() -> FrenchDeck {
         let mut cards = Vec::new();
         for suit in [Suit::Club, Suit::Diamond, Suit::Heart, Suit::Spade] {
             cards.push(Card::King(suit));
@@ -40,7 +40,11 @@ impl FrenchDeck {
                 cards.push(Card::Pip(suit, rank))
             }
         }
-        let mut deck = FrenchDeck { cards };
+        FrenchDeck{ cards }
+    }
+
+    pub fn new() -> FrenchDeck {
+        let mut deck = FrenchDeck::new_unshuffled();
         deck.shuffle();
         deck
     }
